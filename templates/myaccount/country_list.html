@@ -1,0 +1,224 @@
+{% load staticfiles %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>{% block title %}国家地区列表{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+</head>
+<body class="bs-docs-home">
+<nav class="navbar navbar-inverse navbar-static-top bs-docs-nav">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#"><strong>Django基础APP</strong></a>
+            <a class="navbar-brand" href="{% url 'myaccount:country_list' %}"><strong>| 地区</strong></a>
+            <a class="navbar-brand" href="{% url 'myrestaurants:restaurant_list' %}"><strong>| 餐厅</strong></a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="dropdown">
+                        <a class="dropdown-toggle btn-green" data-toggle="dropdown" href="#">
+                            <span class="glyphicon glyphicon-user"></span>
+                            {{ user.username }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a  href="{% url 'myaccount:profile' %}">我的账户</a></li>
+                            <li><a href="{% url 'myaccount:profile_update' %}">修改信息</a></li>
+                            <li><a href="{% url 'account_email' %}">邮箱验证</a></li>
+                            <li><a href="{% url 'account_change_password' %}">修改密码</a></li>
+                            <li><a  href="{% url 'account_logout' %}">退出登录</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="dropdown">
+                        <a class="dropdown-toggle btn-green" href="{% url 'account_signup' %}">
+                            <span class="glyphicon glyphicon-user"></span>
+                            注册
+                        </a>
+                    </li>
+                    <li class="dropdown"><a class="dropdown-toggle" href="{% url 'account_login' %}" >
+                        <span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+    <main>
+        <div class="container">
+        {% block content %}
+        <div class="col-md-12">
+        <p class="text-right">
+        <button  class="btn btn-primary" onclick="window.location.href='{% url "myaccount:add_citys" %}'">批量增加国家城市</button>
+        <button class="btn btn-primary" onclick="add_country()">增加国家</button>
+        </p>
+
+        <h3>国家地区列表</h3>
+
+        <ol class="olMap">
+        {% for country in countrys %}
+            <li>{{ country.name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="javascript:" onclick="edit_country('{{ country.id }}','{{ country.name }}')">
+                <span class="glyphicon glyphicon-pencil"></span> </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="javascript:" onclick="add_city('{{ country.name }}','{{ country.id }}')">
+                <span class="glyphicon glyphicon-plus" style="margin-left: 20px;"></span></a></li>
+            <br>
+            <ul>
+            {% if country.city_set.exists %}
+                {% for city in country.city_set.all %}
+                    <li>{{ city.name }}
+                    <a name="delete" href="javascript:" onclick="del_city('{{ city.id }}','{{ city.name }}')">
+                        <span class="glyphicon glyphicon-trash" style="margin-left: 20px;"></span>
+                    </a>
+                    </li>
+                {% endfor %}
+            {% endif %}
+            </ul>
+            <br>
+        {% empty %}
+            <p>还没有记录！</p>
+        {% endfor %}
+        </ol>
+        </div>
+    {% endblock %}
+    </div>
+</main>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/layer.js' %}"></script>
+<script type="text/javascript">
+function add_country() {
+    var index = layer.open({
+        type:1,
+        skin:"layui-layer-rim",
+        area:["400px","200px"],
+        title:"新增国家",
+        content:'<div class="text-center" style="margin-top:20px"><p>请输入国家名称</p><p>{{ country_form.name }}</p></div>',
+        btn:['确定','取消'],
+        yes:function (index,layero) {
+            country_name = $('#id_name').val();
+            $.ajax({
+                url:'{% url "myaccount:country_list" %}',
+                type:'POST',
+                data:{"name":country_name},
+                success:function (e) {
+                    if (e=="1"){
+                        parent.location.reload();
+                        layer.msg("good");
+                    }else if(e=="2"){
+                        layer.msg("此国家已有，请更换名称")
+                    }else {
+                        layer.msg("新增出现错误")
+                    }
+                },
+            });
+        },
+        btn2:function (index,layero) {
+            layer.close(index)
+        }
+    });
+}
+
+function add_city(name,id) {
+    var country_id = id
+    var index = layer.open({
+        type:1,
+        skin:"layui-layer-rim",
+        area:["400px","200px"],
+        title:"新增城市",
+        content:'<div class="text-center" style="margin-top:20px"><p>请输入'+name+'城市名称</p><p>{{ city_form.name }}</p></div>',
+        btn:['确定','取消'],
+        yes:function (index,layero) {
+            city_name = $('#id_name').val();
+            $.ajax({
+                url:'{% url "myaccount:city_add" %}',
+                type:'POST',
+                data:{"name":city_name,"country_id":country_id},
+                success:function (e) {
+                    if (e=="1"){
+                        parent.location.reload();
+                        layer.msg("good");
+                    }else {
+                        layer.msg("新增出现错误")
+                    }
+                },
+            });
+        },
+        btn2:function (index,layero) {
+            layer.close(index)
+        }
+    });
+}
+
+function edit_country(country_id,country_name) {
+    {#var name = $(the).parents("tr").children("td").eq(1).text();#}
+    var index = layer.open({
+        type:1,
+        skin:"layui-layer-rim",
+        area:["400px","200px"],
+        title:"编辑国家",
+        content:'<div class="text-center" style="margin-top:20px"><p>请编辑新国家名称</p><input type="text" id="new_name" value="'
+            +country_name+'"></p></div>',
+        btn:['确定','取消'],
+        yes:function (index,layero) {
+            new_name = $("#new_name").val();
+            $.ajax({
+                url:"{% url 'myaccount:rename_country' %}",
+                type:"POST",
+                data:{"country_id":country_id,"country_name":new_name},
+                success:function (e) {
+                    if (e=="1"){
+                        parent.location.reload();
+                        layer.msg("good")
+                    }else {
+                        if (e=="2"){
+                            layer.msg("此国家名已有，请更换名称")
+                        }else {
+                            layer.msg("新的名称没有保存，修改失败。")
+                        }
+                    }
+                },
+            });
+        },
+    });
+}
+
+function del_city(city_id,city_name) {
+    {#var name = $(the).parents("tr").children("td").eq(1).text();#}
+    layer.open({
+        type:1,
+        skin:"layui-layer-rim",
+        area:["400px","200px"],
+        title:"删除城市",
+        content:'<div class="text-center" style="margin-top:20px"><p>是否确定删除{'+city_name+'}城市</p></div>',
+        btn:['确定','取消'],
+        yes: function () {
+            $.ajax({
+                url:'{% url "myaccount:del_city" %}',
+                type:"POST",
+                data:{"city_id":city_id},
+                success:function (e) {
+                    if(e=="1"){
+                        parent.location.reload();
+                        layer.msg("has been deleted.");
+                    }else {
+                        layer.msg("删除失败");
+                    }
+                },
+            })
+        },
+    });
+}
+</script>
+</body>
+</html>

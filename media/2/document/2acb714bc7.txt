@@ -1,0 +1,330 @@
+Ubuntu
+useradd -m -s /bin/bash yangxg
+# 把新创建的用户加入超级权限组
+root@localhost:~# usermod -a -G sudo yangxg
+# 为新用户设置密码
+# 注意在输密码的时候不会有字符显示，不要以为键盘坏了，正常输入即可
+root@localhost:~# passwd yangxg
+# 切换到创建的新用户
+root@localhost:~# su - yangxg
+遇到资源不可用时：sudo rm **/lock强制解锁
+复制：sudo cp -r 目标目录 复制路径（.点是当前文件夹）
+创建文件夹：mkdir **
+删除文件：rm **	(-r参数删除带有文件的文件夹）
+重命名：mv 文件名 新名字
+查询权限：ls -l/n
+修改权限：sudo chmod -* ***(所有者+组用户+其它用户) 文件名
+r--4 只读权限   w--2 写入权限   x--1执行权限
+chmod -c 若该档案权限确定已经更改才显示其更改动作
+            -f 若该档案权限不能更改也不要显示错误信息
+            -v 显示权限变更的详细信息
+            -R 对文件目录下的所有文件进行权限更改
+查看进程：ps -ef | grep 应用名
+显示主进程：pstree -ap | grep 应用名
+停止进程：kill -9 查询出的pid 
+解压：tar -xvf 文件名   打包：tar -cvf 文件名
+add-apt-repository
+用法：
+add-apt-repository ppa:<ppa_name>
+举个例子：安装最新的audacious（ubuntu下）
+sudo add-apt-repository ppa:nilarimogard/webupd8
+sudo apt-get update
+sudo apt-get install audacious
+安装：
+apt-get install python-software-properties
+sudo apt-get install software-properties-common
+apt-get
+apt-get install xxxx 安装 
+apt-get remove xxxx 卸载但不删除配置 
+apt-get purge xxxx 卸载并且删除相关配置 
+apt-cache search xxxx 寻找xxxx软件,返回一系列能够下载的软件
+服务器上下传文件应用包
+sudo apt-get install lrzsz
+sz命令可以将服务器上的文件(一个或者多个)下载到window本地
+参数	参数说明
+-a	以文本方式传输（ascii）
+-b	以二进制方式传输（binary）
+-e	对控制字符转义（escape），这可以保证文件传输正确
+rz命令可以将本地的（一个或多个）文件上传到服务器上，上传到执行rz命令时的目录下
+参数	参数说明
+-a	以文本方式传输
+-b	以二进制方式，默认为文本方式
+-e	对所有控制字符转义
+
+Django
+
+安装：pip3 install Django==2.0.6
+查看安装路径：pip show django
+查看当前版本：django-admin --version
+收集静态文件：python manage.py collectstatic
+创建数据库文件：
+python manage.py makemigrations app(可选)
+python manage.py migrate
+创建项目：django-admin startproject blog(项目)
+创建一个超级用户：python manage.py createsuperuser
+启动服务器：python manage.py runserver
+启动项目交互模式：python manage.py shell
+汉语：setting.py > zh-Hans
+用户管理插件：django-allauth
+安装：pip3 instal django-allauth
+处理templates网页集中，需加上django本身admin和register文件夹
+pgsql数据库配置：
+DATABASES ={
+     'default':{
+     'ENGINE':'django.db.backends.postgresql_psycopg2',
+     'NAME':'',#已存在数据库名字
+     'USER':'',
+     'PASSWORD':'',
+     'HOST':'',#数据库IP地址，留空默认localhost
+     'PORT':'5432',#端口      
+     }
+}
+pip install psycopg2安装数据库模块支持
+条件选取querySet的时候，filter表示=，exclude表示!=。
+querySet.distinct()  去重复
+__exact        精确等于 like 'aaa'
+ __iexact    精确等于 忽略大小写 ilike 'aaa'
+ __contains    包含 like '%aaa%'
+ __icontains    包含 忽略大小写 ilike '%aaa%'，但是对于sqlite来说，contains的作用效果等同于icontains。
+__gt    大于
+__gte    大于等于
+__lt    小于
+__lte    小于等于
+__in     存在于一个list范围内
+__startswith   以...开头
+__istartswith   以...开头 忽略大小写
+__endswith     以...结尾
+__iendswith    以...结尾，忽略大小写
+__range    在...范围内
+__year       日期字段的年份
+__month    日期字段的月份
+__day        日期字段的日
+__isnull=True/False
+django内置信号 pre_delete对象删除前 post_delete对象删除后
+from django.db.models.signals import pre_delete,post_delete
+from django.dispatch.dispatcher import receiver
+@receiver(pre_delete,sender=对象)
+def 对象_delete(sender,instance，**kwargs):
+    instance.file.delete(False)
+
+版本更新变化：
+2.0以后定义外键和一对一关系时需加on_delete=models.CASCADE
+2.0以前：from django.core.urlresolvers import reverse 后：from django.urls import reverce
+自定义标签assignment_tag合到simple_tag
+
+Html
+<td colspan=n横向 rowspan=n纵向>
+<button onclick="window.location.href='**'">
+分页代码可以用GET方法在后面加参数&参数名=数值
+
+Python
+
+安装：sudo apt-get install python-numpy #python-numpy为软件包的名称
+python第三方依赖
+生成：pip freeze > requirements.txt
+安装：pip install -r requirements.txt
+本地时间获取应用
+import time
+time_1 = time.strftime("%Y/%m/%d",time.localtime())  >  2018/11/13
+
+虚拟环境
+安装：sudo pip3 install virtualenv
+生成：virtualenv --python=python3 env（文件夹名）--no-site-packages [虚拟环境名称]
+启动：source env/bin/activate
+退出虚拟环境：deactivate
+
+PostgreSQL
+
+ubuntu下postgreSQL9.6安装配置
+一、安装并配置，并设置远程登陆的用户名和密码
+
+1、安装postgreSQL
+
+sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+sudo apt-get update
+
+sudo apt-get install postgresql-9.6
+
+在Ubuntu下安装Postgresql后，会自动注册为服务，并随操作系统自动启动。
+在Ubuntu下安装Postgresql后，会自动添加一个名为postgres的操作系统用户，密码是随机的。并且会自动生成一个名字为postgres的数据库，用户名也为postgres，密码也是随机的。
+2、修改postgres数据库用户的密码为manage
+
+打开客户端工具（psql）
+
+sudo -u postgres psql
+
+其中，sudo -u postgres 是使用postgres 用户登录的意思
+PostgreSQL数据默认会创建一个postgres的数据库用户作为数据库的管理员，密码是随机的
+postgres=# ALTER USER postgres WITH PASSWORD 'manage'; 
+
+postgres=#为PostgreSQL下的命令提示符，--注意最后的分号；
+3、退出PostgreSQL psql客户端
+
+postgres=# \q
+
+4、修改ubuntu操作系统的postgres用户的密码（密码要与数据库用户postgres的密码相同）
+
+切换到root用户
+
+su root
+
+删除PostgreSQL用户密码
+
+sudo passwd -d postgres
+
+passwd -d 是清空指定用户密码的意思
+设置PostgreSQL系统用户的密码
+
+sudo -u postgres passwd
+
+按照提示，输入两次新密码
+
+输入新的 UNIX 密码
+重新输入新的 UNIX 密码
+passwd：已成功更新密码
+5、修改PostgresSQL数据库配置实现远程访问
+
+vi /etc/postgresql/9.6/main/postgresql.conf
+
+1.监听任何地址访问，修改连接权限
+
+#listen_addresses = 'localhost' 改为 listen_addresses = '*'
+
+2.启用密码验证
+
+#password_encryption = on 改为 password_encryption = on
+
+vi /etc/postgresql/9.6/main/pg_hba.conf
+
+在文档末尾加上以下内容
+
+host all all 0.0.0.0 0.0.0.0 md5
+
+6、重启服务
+
+/etc/init.d/postgresql restart
+
+7、5432端口的防火墙设置
+
+5432为postgreSQL默认的端口
+
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 5432 -j ACCEPT
+
+二、内部登录，管理数据库、新建数据库、用户和密码
+
+1、登录postgre SQL数据库
+
+psql -U postgres -h 127.0.0.1
+
+2、创建新用户zhangps，但不给建数据库的权限
+
+postgres=# create user "zhangps" with password '123456' nocreatedb;
+
+用户名处是双引号
+3、建立数据库，并指定所有者
+
+postgres=#create database "testdb" with owner = "zhangps";
+
+三、外部登录，管理数据库、新建数据库、用户和密码
+
+1、在外部命令行的管理命令，创建用户pencil
+
+sudo -u postgres createuser -D -P pencil
+
+输入新的密码:
+再次输入新的密码:
+2、建立数据库(tempdb)，并指定所有者为（pencil）
+
+sudo -u postgres createdb -O pencil tempdb
+
+-O设定所有者为pencil
+postgres的 日志目录，
+/var/lib/postgresql/9.6/main
+如果不修改日志目录，则应该在
+/var/log/postgresql中
+
+在目录/etc/postgresql/9.6/main/postgresql.conf
+可以修改日志，重新定向目录为/var/lib/postgresql/9.6/main
+log_destination = 'stderr'
+logging_collector = on
+log_directory = 'pg_log'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+log_rotation_age = 1d
+log_rotation_size = 100MB
+log_min_messages = info
+
+Nginx
+
+安装
+sudo apt-get install nginx
+在/usr/sbin/目录下是nginx命令所在目录，在/etc/nginx/目录下是nginx所有的配置文件
+sudo nginx 启动
+nginx -s reload/reopen/stop/quit   重载/重启/停止/退出
+
+server {
+    charset utf-8;
+    listen 80;
+    server_name localhost; 
+
+    location /static { 
+        alias /home/yangxg/sites/demo.zmrenwu.com/django-blog-tutorial/static; 
+    }
+
+    location / { 
+        proxy_set_header Host $host;
+        proxy_pass http://unix:/tmp/demo.zmrenwu.com.socket;
+    }
+}
+若无其它网站启动配置，则注释include /etc/nginx/sites-enabled/*;
+若有多网站配置，则
+sudo ln -s /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
+
+
+Gunicorn
+
+安装：pip install gunicorn
+启动：gunicorn --bind unix:/tmp/demo.zmrenwu.com.socket blogproject.wsgi:application
+
+ubuntu16.04自动系统启动gunicorn教程django
+博主原帖： 14 – 使用 Nginx 和 Gunicorn 部署 Django 博客我看评论里面博主用的是Ubuntu 14的系统，
+所以可以用upstart的方式写脚本自动启动gunicorn，而在Ubuntu 16系统中已经没有upstart了，而是采用的
+systemd的方式。我参考了评论里面_CindyL_的接SystemdForUpstartUsers，搜索了相关的东西，终于把这个
+自动启动给弄出来了，现在把过程写一下,防止大家再走弯路。
+
+我用的操作系统是Ubuntu 16.04 LTS，用户是siar，非root用户
+1. 新建目录(自启动服务文件存放目录)
+sudo mkdir -p /usr/lib/systemd/system
+
+2. 新建文件(自启动的服务文件)
+sudo vim /usr/lib/systemd/system/siar.service
+
+2.1 添加如下内容
+[Unit]
+After=syslog.target network.target remote-fs.target nss-lookup.target
+[Service]
+# 你的用户
+User=siar
+# 你的目录
+WorkingDirectory=/home/siar/sites/django-blog-learning/blogproject
+# gunicorn启动命令
+ExecStart=/home/siar/sites/env/bin/gunicorn --bind unix:/tmp/siar.socket blogproject.wsgi:application
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+有一些参数我也不是太懂，具体可以参照下面的systemd.service 中文手册链接。
+2.2 保存并退出
+:wq
+
+3. 启动服务
+sudo systemctl start siar
+
+我的文件名是siar.service,所以就sudo systemctl start siar
+4. 添加服务到开机自动运行
+sudo systemctl enable siar.service
+
+5. 验证启动
+ps -ef | grep gunicorn
+
+查看gunicorn是否已经启动，有两个进程。

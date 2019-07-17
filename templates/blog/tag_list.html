@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if tag_list %}
+        {% for tag in tag_list %}
+            {{ tag.name }}
+        {% endfor %}
+
+    {% endif %}
+{% endblock %}

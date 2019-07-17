@@ -1,0 +1,51 @@
+{% extends 'myrestaurants/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<h2>Update My Profile</h2>
+
+<div class="form-wrapper">
+   <form method="post" action="" enctype="multipart/form-data">
+      {% csrf_token %}
+     {% for field in form %}
+          <div class="fieldWrapper">
+        {{ field.errors }}
+       {{ field.label_tag }} {{ field }}
+       {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+          </div>
+        {% endfor %}
+     <div class="button-wrapper submit">
+         <input type="submit" value="Update" />
+      </div>
+   </form>
+</div>
+<p>Welcome, {{ user.username }}.
+    {% if not user.profile.account_verified %}
+    (Unverified email.)
+    {% endif %}
+</p>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script>
+    $("#id_country").change(function() {
+     var country_id = $(this).val();
+
+     $.ajax({
+       url: '{% url "myaccount:ajax_load_cities" %}',
+       data: {
+         'country_id': country_id
+       },
+       type: 'GET',
+       dataType: 'json',
+       success: function (data) {
+           var content='';
+           $.each(data, function(i, item){
+                 content+='<option value='+item.id+'>'+item.name+'</option>'
+               });
+           $('#id_city').html(content)
+       },
+
+     });
+   });
+ </script>
+{% endblock %}

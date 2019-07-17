@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extra_head %}
+<style>
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="col-md-12">
+<h3>添加国家</h3>
+<form class="" action="." method="post">
+{% csrf_token %}
+    {{ form.as_p }}
+    <fieldset>
+        <legend>所属地城市添加</legend>
+        {{ ingcity_formset.management_form }}
+        {{ ingcity_formset.non_form_errors }}
+        {% for form in ingcity_formset %}
+            {{ form.name.errors }}
+            {{ form.name.label_tag }}
+            {{ form.name }}
+        {% endfor %}
+    </fieldset>
+<button type="submit">提交</button>
+</form>
+</div>
+    <hr>
+<footer class="footer">
+    <div class="container">
+
+            <div style="width:300px;margin:0 auto; padding:20px 0;">
+                <p>
+                站长邮箱：kingosky@163.com<br>
+                <a href="http://www.miitbeian.gov.cn">浙ICP备18051274号</a>
+{#                <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33048302000386"#}
+{#                style="display:inline-block;text-decoration:none;height:20px;line-height:20px;"#}
+{#                >浙公网安备 33048302000386号</a>#}
+            </p>
+                <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33048302000386"
+                 style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
+                <img src="/static/images/beian_web.png" style="float:left;"/>
+                <p style="float:left;height:20px;line-height:20px;margin: 0px 0px 0px 5px; color:#939393;">浙公网安备 33048302000386号</p></a>
+            </div>
+    </div>
+</footer>
+{% endblock %}
